@@ -301,7 +301,7 @@ void as_multop(unsigned opcode)
 	outreg(&a2);
 }
 
-/* FIXME: This is a relative offset so needs adjusting */
+/* The relative offset is always the last byte and relative to the byte following */
 void as_reloff(void)
 {
 	ADDR a1;
@@ -309,7 +309,7 @@ void as_reloff(void)
 	constify(&a1);
 	istuser(&a1);
 	a1.a_value -= dot[segment];
-	a1.a_value -= 2;
+	a1.a_value -= 1;
 	outrabrel(&a1);
 }
 
@@ -638,14 +638,19 @@ loop:
 			outreg(&a2);
 			return;
 		}
-		if ((a1.a_type & TMADDR) == TIDXB) {
+		if ((a1.a_type & TMADDR) == TR) {
 			outab(0x98);
+			outreg(&a1);
+			outreg(&a2);
+			return;
+		}
+		if ((a1.a_type & TMADDR) == TIDXB) {
+			outab(0xA8);
 			outraw(&a1);
 			outreg(&a2);
 			return;
 		}
-		outreg(&a1);
-		outreg(&a2);
+		aerr(BAD_MODE);
 		break;
 	case TTRAP:
 		/* TRAP is also unique */
