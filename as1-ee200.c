@@ -360,6 +360,7 @@ void asmline(void)
 	ADDR a3;
 	unsigned r1, r2;
 	unsigned force8 = 0;
+	unsigned noshort = 0;
 
 loop:
 	if ((c=getnb())=='\n' || c==';')
@@ -750,10 +751,17 @@ loop:
 		outab(opcode >> 8);
 		outab(opcode | (a1.a_value << 4));
 		break;
+	/* Two register ALU operations without short forms */
+	case TREG2ANS:
+		noshort = 1;
+		goto reg2a;
+	case TREG2A8NS:
+		noshort = 1;
 	/* Two register ALU operations with short forms */
 	case TREG2A8:
 		force8 = 1;
 	case TREG2A:
+reg2a:
 		/* CPU6 also allows for other modes on 0x50-0x55 instructions
 			(src), dst
 			const, dst
@@ -771,7 +779,7 @@ loop:
 					aerr(WREGONLY);
 					break;
 				case TWR:
-					if ((a2.a_type & TMREG) == RB &&
+					if (!noshort && (a2.a_type & TMREG) == RB &&
 						(a1.a_type & TMREG) == RA) {
 						outab(opcode | 0x18);
 					} else {
@@ -793,65 +801,13 @@ loop:
 		case TBR:
 			if ((a2.a_type & TMMODE) != TBR)
 				aerr(BREGONLY);
-			if ((a2.a_type & TMREG) == RBL &&
+			if (!noshort && (a2.a_type & TMREG) == RBL &&
 				(a1.a_type & TMREG) == RAL)
 				outab(opcode | 0x08);
 			else {
 				outab(opcode);
 				outab((a1.a_type & TMREG) << 4 | (a2.a_type & TMREG));
 			}
-			break;
-		case TUSER:
-			if (cpu_model < 5)
-				aerr(BADCPU);
-			outab(opcode | 0x10);
-			outab((a2.a_type & TMREG)| 0x10);
-			outraw(&a1);
-			break;
-		case TMINDIR|TUSER:
-			if (cpu_model < 5)
-				aerr(BADCPU);
-			if ((a2.a_type & TMMODE) != TWR)
-				aerr(WREGONLY);
-			outab(opcode | 0x10);
-			outab((a2.a_type & TMREG) | 0x01);
-			outraw(&a1);
-			break;
-		default:
-			aerr(REGONLY);
-		}
-		break;		
-	/* Two register ALU operations with no short forms */
-	case TREG2ANS:
-		getaddr_ext(&a1, 0);
-		comma();
-		getaddr_ext(&a2, 0);
-		switch(a1.a_type & TMMODE) {
-		case TWR:
-			switch(a2.a_type & TMMODE) {
-				case TBR:
-					aerr(WREGONLY);
-					break;
-				case TWR:
-					outab(opcode | 0x10);
-					outab((a1.a_type & TMREG) << 4 | (a2.a_type & TMREG));
-					break;
-				case TMINDIR|TUSER:
-					if (cpu_model < 5)
-						aerr(BADCPU);
-					outab(opcode | 0x10);
-					outab(((a1.a_type & TMREG) << 4)| 0x11);
-					outraw(&a2);
-					break;
-				default:
-					aerr(SYNTAX_ERROR);
-			}
-			break;
-		case TBR:
-			if ((a2.a_type & TMMODE) != TBR)
-				aerr(BREGONLY);
-			outab(opcode);
-			outab((a1.a_type & TMREG) << 4 | (a2.a_type & TMREG));
 			break;
 		case TUSER:
 			if (cpu_model < 5)

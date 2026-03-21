@@ -2288,6 +2288,7 @@ typedef	uint16_t	VALUE;		/* For symbol values */
 #define TIMPL6	0x2A00			/* Not present on CPU4 */
 #define TBLOCK	0x2B00			/* Block operations CPU6 only */
 #define TRANGE	0x2C00			/* Range CPU6 only */
+#define TREG2A8NS 0x2D00		/* Two reg byte, no short form */
 
 /*
  * Registers.

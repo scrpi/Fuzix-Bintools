@@ -187,8 +187,8 @@ SYM	sym[] = {
 	{	0,	"addb",		TREG2A8,	0x40	},
 	{	0,	"subb",		TREG2A8,	0x41	},
 	{	0,	"andb",		TREG2A8,	0x42	},
-	{	0,	"orib",		TREG2A8,	0x43	},
-	{	0,	"oreb",		TREG2A8,	0x44	},
+	{	0,	"orib",		TREG2A8NS,	0x43	},
+	{	0,	"oreb",		TREG2A8NS,	0x44	},
 
 	/* Special 0x46: this is bignums and not yet all decoded */
 
