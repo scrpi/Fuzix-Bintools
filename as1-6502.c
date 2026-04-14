@@ -715,7 +715,7 @@ loop:
 				break;
 			case TZP_IND:	/* (dp) */
 				require_cpu(CPU_65C02);
-				reg = 0x12;	/* Slightly odd case */
+				reg = 0x11;	/* Slightly odd case */
 				break;
 			case TZP_INDL:	/* [dp] */
 				require_cpu(CPU_65C816);
