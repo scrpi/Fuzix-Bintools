@@ -715,7 +715,7 @@ loop:
 				break;
 			case TZP_IND:	/* (dp) */
 				require_cpu(CPU_65C02);
-				reg = 0x11;	/* Slightly odd case */
+				reg = 0x12;	/* Slightly odd case */
 				break;
 			case TZP_INDL:	/* [dp] */
 				require_cpu(CPU_65C816);
@@ -748,7 +748,7 @@ loop:
 				break;
 		}
 		opcode &= 0xFF;
-		opcode |= reg;
+		opcode += reg;
 		if (opcode == 0x89)	/* sta immediate */
 			qerr(BADMODE);
 		outab(opcode);
