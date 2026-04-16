@@ -427,25 +427,16 @@ loop:
 		aerr(INVALID_REG);
 		break;
 
-	case TSUB:
-		getaddr(&a1);
-		reg = a1.a_type&TMREG;
-		if (a1.a_type == TUSER) {
-			outab(opcode | OPSUBI);
-			outabchk2(&a1);
-			break;
-		}
-		if ((a1.a_type&TMMODE) == TBR) {
-			outop(opcode|reg, &a1);
-			break;
-		}
-		aerr(INVALID_REG);
-		break;
-
 	case TADD:
 		getaddr(&a1);
-		comma();
-		getaddr(&a2);
+		c = getnb();
+		if (c != ',') {
+			unget(c);
+			a2 = a1;
+			/* Set the only bit of a1 used */
+			a1.a_type = TBR|A;
+		} else
+			getaddr(&a2);
 		/* Gameboy extension ADD SP,n */
 		if (opcode == 0x0080 && a1.a_type == (TWR|SP)) {
 			if (a2.a_type == TUSER) {
