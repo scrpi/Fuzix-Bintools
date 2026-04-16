@@ -390,6 +390,7 @@ loop:
 		if ((a1.a_type&TMMODE) == TUSER
 		&&   a1.a_value < 8
 		&&  (a2.a_type&TMMODE) == TBR) {
+			reg = a2.a_type&TMREG;
 			outop(opcode|(a1.a_value<<3)|reg, &a2);
 			break;
 		}
@@ -399,6 +400,7 @@ loop:
 	case TSHR:
 		getaddr(&a1);
 		if ((a1.a_type&TMMODE) == TBR) {
+			reg = a1.a_type&TMREG;
 			outop(opcode|reg, &a1);
 			break;
 		}
