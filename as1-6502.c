@@ -572,7 +572,7 @@ loop:
 			}
 			if (a1.a_type != TZP && a1.a_type != (TUSER|TMINDIR))
 				aerr(BADMODE);
-			outab(0x60);
+			outab(opcode | 0x20);
 			outraw(&a1);
 			break;
 		}
