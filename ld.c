@@ -978,7 +978,7 @@ static void record_reloc(struct object *o, unsigned high, unsigned size, unsigne
 #endif
 	if (seg == ZP) {
 		fputc(0, relocf);
-		fputc(0, relocf);
+		fputc(addr >> 8, relocf);
 		fputc((addr & 0xFF), relocf);
 		return;
 	}
