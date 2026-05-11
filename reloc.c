@@ -54,6 +54,10 @@ int main(int argc, char *argv[])
     int efd, rfd;
     static const uint8_t cff = 0xFF;
     uint8_t d;
+#ifdef RELOC_6502
+    uint8_t ext[4];
+    uint16_t rbase;
+#endif
 
     if (argc != 3) {
         fprintf(stderr, "%s binary relocs\n", argv[0]);
@@ -74,6 +78,9 @@ int main(int argc, char *argv[])
         exit(1);
     }
     raddr = hdr.a_text + hdr.a_data;		/* End of data */
+#ifdef RELOC_6502
+    rbase = raddr;
+#endif
     if (lseek(efd, raddr, SEEK_SET) < 0) {
         perror("lseek");
         exit(1);
@@ -82,16 +89,16 @@ int main(int argc, char *argv[])
         hdr.a_text, hdr.a_data, hdr.a_bss, raddr);
     /* TODO: buffer output */
     if (hdr.a_zp) {
-        laddr = 0x00;
+        laddr = 0x0000;
         while(read(rfd, ar, 3) == 3) {
             if (ar[0])
-                break;
+                continue;
             addr = (ar[1] << 8) | ar[2];
             if (addr < laddr) {
                 fprintf(stderr, "Mis-sorted relocations.\n");
                 exit(1);
             }
-            while(laddr - addr > 254) {
+            while(addr - laddr > 254) {
                 write(efd, &cff, 1);
                 laddr += 254;
                 raddr++;
@@ -99,6 +106,7 @@ int main(int argc, char *argv[])
             d = addr - laddr;
             write(efd, &d, 1);
             raddr++;
+            laddr = addr;
         }
         d = 0;
         write(efd, &d, 1);
@@ -152,6 +160,20 @@ int main(int argc, char *argv[])
         exit(1);
     }
     printf("Header adjusted to data %x bss %x\n", hdr.a_data,hdr.a_bss);
+#ifdef RELOC_6502
+    /* For the 6502 we have to deal with the relocations being done by the OS
+       due to the limits of the CPU */
+    if (read(efd, ext, 4) != 4) {
+        fprintf(stderr, "%s: unable to read 6502 header.\n", argv[2]);
+        exit(1);
+    }
+    ext[2] = rbase & 0xFF;
+    ext[3] = rbase >> 8;
+    if (lseek(efd, -4, SEEK_CUR) < 0 || write(efd, ext, 4) != 4) {
+        fprintf(stderr, "%s: unable to update 6502 header.\n", argv[2]);
+        exit(1);
+    }
+#endif
     close(efd);
     close(rfd);
     return 0;
