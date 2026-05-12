@@ -972,16 +972,22 @@ static void record_reloc(struct object *o, unsigned high, unsigned size, unsigne
 	if (seg == ABSOLUTE)
 		return;
 
-#ifndef ARCH32
-	if (size == 2 && !(o->oh->o_flags & OF_BIGENDIAN))
-		addr++;
-#endif
+	/* ZP relocs are always low byte relocations */
 	if (seg == ZP) {
+		/* High halves of a ZP reloc are ignored */
+		if (high)
+			return;
 		fputc(0, relocf);
 		fputc(addr >> 8, relocf);
 		fputc((addr & 0xFF), relocf);
 		return;
 	}
+
+#ifndef ARCH32
+	if (size == 2 && !(o->oh->o_flags & OF_BIGENDIAN))
+		addr++;
+#endif
+
 	if (size == 1 && !high)
 		return;
 	/* Record the address of the high byte */
