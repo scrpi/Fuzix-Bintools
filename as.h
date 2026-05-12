@@ -1712,6 +1712,106 @@ typedef	uint16_t	VALUE;		/* For symbol values */
 #define	SEGMENT_CLASH	27
 #define NOT_REG0	28
 
+#elif TARGET_TI980
+
+typedef	uint32_t	VALUE;		/* For symbol values - needs to be
+					   32bit to track bytes */
+
+#define SEGMENT_LIMIT	0x10000		/* bytes */
+
+#define ARCH OA_TI980
+#define ARCH_FLAGS OF_BIGENDIAN
+#define ARCH_CPUFLAGS 0		/* For now until CPU type properly settable */
+
+#define TARGET_WORD_MACHINE
+#define TARGET_BIGENDIAN
+/* We generate intentionally wrapping 16bit maths for relocations */
+#define TARGET_RELOC_OVERFLOW_OK
+
+/*
+ * Types. These are used
+ * in both symbols and in address
+ * descriptions. Observe the way the
+ * symbol flags hide in the register
+ * field of the address.
+ */
+#define	TMREG	0x000F			/* Register code */
+#define	TMMDF	0x0001			/* Multidef */
+#define	TMASG	0x0002			/* Defined by "=" */
+#define	TMMODE	0xFF00			/* Mode */
+#define	TMINDIR	0x8000			/* Indirect flag in mode */
+#define TPUBLIC	0x0080			/* Exported symbol */
+#define TMADDR	0x00F0			/* Addressing mode bits */
+
+#define TDIRECT	0x0010			/* Direct page */
+#define TINDIRECT 0x0020		/* Indirect */
+#define TIMMED	0x0030			/* Immediate */
+#define TINDEX	0x0040			/* Indexed */
+
+#define	TNEW	0x0000			/* Virgin */
+#define	TUSER	0x0100			/* User name */
+#define	TBR	0x0200			/* Byte register */
+#define	TWR	0x0300			/* Word register */
+#define	TSR	0x0400			/* Special register */
+#define	TDEFB	0x0500			/* defb */
+#define	TDEFW	0x0600			/* defw */
+#define	TDEFS	0x0700			/* defs */
+#define	TDEFM	0x0800			/* defm */
+#define	TORG	0x0900			/* org */
+#define	TEQU	0x0A00			/* equ */
+#define	TCOND	0x0B00			/* conditional */
+#define	TENDC	0x0C00			/* end conditional */
+#define TSEGMENT 0x0D00			/* segments by number */
+#define TEXPORT 0x0E00			/* symbol export */
+#define TCC	0x0F00
+/* CPU specific codes */
+#define TEA	0x1000			/* Opcode with effective address */
+#define TDEA	0x1100			/* Ditto but 32bit extended immediate */
+#define TRR	0x1200			/* Register,register ops */
+#define TSHIFT	0x1300			/* Shifts */
+#define TIMPL	0x1400			/* Implicit */
+#define TR	0x1500			/* Single register (skip etc) */
+#define TSENSE	0x1600			/* Sense switches */
+#define TIDLE	0x1700			/* IDL - special */
+#define TAPI	0x1800			/* API - special */
+#define TDEV	0x1900			/* Device (rds/wds) */
+#define TMEM	0x1A00			/* Address */
+#define TATI	0x1B00			/* ATI - special */
+#define TBIT	0x1C00			/* Bit test */
+#define TBITM	0x1D00			/* Bit tests (m form) */
+
+/*
+ *	Error message numbers
+ */
+
+#define BRACKET_EXPECTED 1
+#define MISSING_COMMA	2
+#define SQUARE_EXPECTED 3
+#define PERCENT_EXPECTED 4
+#define UNEXPECTED_CHR	10
+#define PHASE_ERROR	11
+#define MULTIPLE_DEFS	12
+#define SYNTAX_ERROR	13
+#define MUST_BE_ABSOLUTE	14
+#define MISSING_DELIMITER 15
+#define INVALID_CONST	16
+#define BRA_RANGE	17
+#define REG_RANGE	18
+#define ADDR_REQUIRED	19
+#define INVALID_ID	20
+#define BADMODE		21
+#define DIVIDE_BY_ZERO	22
+#define CONSTANT_RANGE  23
+#define DATA_IN_BSS	24
+#define SEGMENT_OVERFLOW 25
+#define REG_REQUIRED	26
+#define	SEGMENT_CLASH	27
+#define REG_ZEROONLY	28
+#define TOOMANYJCC	29
+#define REG_NOTZERO	30
+#define ALIGNMENT	31
+#define BRA_BAD		32
+
 #elif TARGET_TMS9900
 
 typedef	uint16_t	VALUE;		/* For symbol values */

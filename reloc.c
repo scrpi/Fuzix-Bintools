@@ -110,6 +110,7 @@ int main(int argc, char *argv[])
         }
         d = 0;
         write(efd, &d, 1);
+        raddr++;
     }
     if (lseek(rfd, 0, SEEK_SET) < 0) {
         perror("lseek");

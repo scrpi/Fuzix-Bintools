@@ -15,7 +15,7 @@ all: as1802 ld1802 nm1802 osize1802 dumprelocs1802 \
      assuper8 ldsuper8 nmsuper8 osizesuper8 dumprelocssuper8 \
      asz8 ldz8 nmz8 osizez8 dumprelocsz8 \
      asz80 ldz80 nmz80 osizez80 dumprelocsz80 \
-     reloc template Tools
+     reloc reloc6502 template Tools
 
 test: as316 ld316 nm316 osize316 dumprelocs316 \
       as8060 ld8060 nm8060 osize8060 dumprelocs8060 \
@@ -23,7 +23,9 @@ test: as316 ld316 nm316 osize316 dumprelocs316 \
       ascp1600 ldcp1600 nmcp1600 osizecp1600 dumprelocscp1600 \
       aspdp4 ldpdp4 nmpdp4 osizepdp4 dumprelocspdp4 \
       aspe16 ldpe16 nmpe16 osizepe16 dumprelocspe16 \
-      aspe32 ldpe32 nmpe32 osizepe32 dumprelocspe32
+      aspe32 ldpe32 nmpe32 osizepe32 dumprelocspe32 \
+      asti980 ldti980 nmti980 osizeti980 dumprelocsti980
+
 
 todo: as8096 ld8096 nm8096 osize8096 dumprelocs8096
 
@@ -38,6 +40,9 @@ CFLAGS += -Wall -pedantic
 
 reloc: $(HDR) reloc.c
 	cc $(CFLAGS) reloc.c -o reloc
+
+reloc6502: $(HDR) reloc.c
+	cc $(CFLAGS) -DRELOC_6502 reloc.c -o reloc6502
 
 template: template.c
 	cc $(CFLAGS) template.c -o template
@@ -342,6 +347,21 @@ osizepe32: $(HDR) osize.c
 dumprelocspe32: $(HDR) dumprelocs.c
 	$(CC) $(CFLAGS) -DARCH32 -o dumprelocspe32 dumprelocs.c
 
+asti980: $(HDR) $(CORE) as1-ti980.c as6-ti980.c
+	$(CC) $(CFLAGS) -DTARGET_TI980 -o asti980 $(CORE) as1-ti980.c as6-ti980.c
+
+ldti980: $(HDR) ld.c
+	$(CC) $(CFLAGS) -o ldti980 ld.c
+
+nmti980: $(HDR) nm.c
+	$(CC) $(CFLAGS) -o nmti980 nm.c
+
+osizeti980: $(HDR) osize.c
+	$(CC) $(CFLAGS) -o osizeti980 osize.c
+
+dumprelocsti980: $(HDR) dumprelocs.c
+	$(CC) $(CFLAGS) -o dumprelocsti980 dumprelocs.c
+
 asz8: $(HDR) $(CORE) as1-z8.c as6-z8.c
 	$(CC) $(CFLAGS)  -DTARGET_Z8 -o asz8 $(CORE) as1-z8.c as6-z8.c
 
@@ -428,6 +448,7 @@ clean:
 	rm -f aspdp4 ldpdp4 nmpdp4 osizepdp4 dumprelocspdp4
 	rm -f aspe16 ldpe16 nmpe16 osizepe16 dumprelocspe16
 	rm -f aspe32 ldpe32 nmpe32 osizepe32 dumprelocspe32
+	rm -f asti980 ldti980 nmti980 osizeti980 dumprelocsti980
 	rm -f assuper8 ldsuper8 nmsuper8 osizesuper8 dumprelocssuper8
 	rm -f asz8 ldz8 nmz8 osizez8 dumprelocsz8
 	rm -f asz80 ldz80 nmz80 osizez80 dumprelocsz80
@@ -456,6 +477,7 @@ install: all
 	cp asgb ldgb nmgb osizegb dumprelocsgb $(CCROOT)/bin
 	cp assuper8 ldsuper8 nmsuper8 osizesuper8 dumprelocssuper8 $(CCROOT)/bin
 	cp reloc $(CCROOT)/bin/relocz80
+	cp reloc6502 $(CCROOT)/bin/reloc6502
 	cp template $(CCROOT)/bin/template
 	cp Tools/Flex/binify $(CCROOT)/bin/flex-binify
 	cp Tools/Flex/flexfs $(CCROOT)/bin/flex-fs
@@ -469,4 +491,5 @@ installtest: test
 	cp ascp1600 ldcp1600 nmcp1600 osizecp1600 dumprelocscp1600 $(CCROOT)/bin
 	cp aspe16 ldpe16 nmpe16 osizepe16 dumprelocspe16 $(CCROOT)/bin
 	cp aspe32 ldpe32 nmpe32 osizepe32 dumprelocspe32 $(CCROOT)/bin
+	cp asti980 ldti980 nmti980 osizeti980 dumprelocsti980 $(CCROOT)/bin
 	cp aspdp4 ldpdp4 nmpdp4 osizepdp4 dumprelocspdp4 $(CCROOT)/bin
