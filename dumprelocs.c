@@ -127,10 +127,10 @@ static int reloc_word(int fd, int size)
             n |= nextbyte(fd);
         }
     } else {
-        unsigned shift = (size - 1) * 8;
+        unsigned shift = 0;
         while(size--) {
             n |= nextbyte(fd) << shift;
-            shift -= 8;
+            shift += 8;
         }
     }
     return n;
@@ -336,8 +336,10 @@ static int process(const char *p)
         close(fd);
         return 1;
     }
-    if (hdr.o_flags & OF_BIGENDIAN)
+    if (hdr.o_flags & OF_BIGENDIAN) {
+        printf("BE\n");
         bigendian = 1;
+    }
 
     if (load_symbols(fd, &hdr) < 0) {
         fprintf(stderr, "%s: cannot load symbols.\n", p);
