@@ -164,7 +164,7 @@ SYM	sym[] = {
 	{	0,	"clc",		TIMPL,		0xDF80	},
 };
 
-        
+
 /*
  * Set up the symbol table.
  * Sweep through the initializations

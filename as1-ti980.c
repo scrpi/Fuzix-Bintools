@@ -143,7 +143,7 @@ unsigned getea(ADDR *ap)
 
 	c = getnb();
 
-	if (c == '=') 
+	if (c == '=')
 		r = 7;
 	else if (c == '*')
 		indir = 1;
@@ -191,9 +191,9 @@ static void encode_ea(unsigned opcode, int l, int ext)
 	case 6:	/* 2 with indirect */
 		/* Must be reachable from dot[segment] signed */
 #if 0
-TODO		
+TODO
 		checkpcrel(&a1);
-#endif		
+#endif
 		/* TODO - calc pcrel form if ok */
 		outaw(opcode | (a1.a_value & 0xFF));
 		break;
@@ -223,10 +223,10 @@ TODO
 		}
 		break;
 	}
-} 
+}
 
 #if 0
-			
+
 static void memref(ADDR *ap, unsigned type)
 {
 	/* TODO: check by type */
@@ -329,7 +329,7 @@ static void write_memref(unsigned opcode, ADDR *ap, unsigned opbase)
 	outbyte(ap->a_value & 0xFF);
 	outab(opcode >> 8)
 	outab(opcode);
-#endif	
+#endif
 }
 
 #endif
