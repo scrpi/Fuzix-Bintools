@@ -42,7 +42,7 @@ struct objhdr
 #define OA_6809		13
 #define OA_PE16		14	/* Interdata/Perkin Elmer 16bit */
 #define OA_8086		15
-#define OA_GB		16	/* Gameboy */
+#define OA_SM83		16	/* SM83 (Gameboy etc) */
 #define	OA_6805		17	/* 6805/05/HC08 - 6808 is unrelated */
 #define OA_H316		18	/* System 16 */
 #define OA_CP1600	19	/* CP1600 */

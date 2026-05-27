@@ -173,14 +173,14 @@ typedef	uint16_t	VALUE;		/* For symbol values */
 #define TOO_MANY_JR	31
 #define REQUIRE_Z80N	32
 
-#elif defined(TARGET_GB)
+#elif defined(TARGET_SM83)
 
 /* We generate intentionally wrapping 16bit maths for relocations */
 #define TARGET_RELOC_OVERFLOW_OK
 
 typedef	uint16_t	VALUE;		/* For symbol values */
 
-#define ARCH OA_GB
+#define ARCH OA_SM83
 #define ARCH_FLAGS 0
 #define ARCH_CPUFLAGS 0
 

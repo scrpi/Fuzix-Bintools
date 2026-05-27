@@ -9,7 +9,7 @@ all: as1802 ld1802 nm1802 osize1802 dumprelocs1802 \
      as8080 ld8080 nm8080 osize8080 dumprelocs8080 \
      as9900 ld9900 nm9900 osize9900 dumprelocs9900 \
      asee200 ldee200 nmee200 osizeee200 dumprelocsee200 \
-     asgb ldgb nmgb osizegb dumprelocsgb \
+     assm83 ldsm83 nmsm83 osizesm83 dumprelocssm83 \
      ashc11 ldhc11 nmhc11 osizehc11 dumprelocshc11 \
      asnova ldnova nmnova osizenova dumprelocsnova \
      assuper8 ldsuper8 nmsuper8 osizesuper8 dumprelocssuper8 \
@@ -392,20 +392,20 @@ osizesuper8: $(HDR) osize.c
 dumprelocssuper8: $(HDR) dumprelocs.c
 	$(CC) $(CFLAGS) -o dumprelocssuper8 dumprelocs.c
 
-asgb: $(HDR) $(CORE) as1-gb.c as6-gb.c
-	$(CC) $(CFLAGS)  -DTARGET_GB -o asgb $(CORE) as1-gb.c as6-gb.c
+assm83: $(HDR) $(CORE) as1-sm83.c as6-sm83.c
+	$(CC) $(CFLAGS)  -DTARGET_SM83 -o assm83 $(CORE) as1-sm83.c as6-sm83.c
 
-ldgb: $(HDR) ld.c
-	$(CC) $(CFLAGS) -o ldgb ld.c
+ldsm83: $(HDR) ld.c
+	$(CC) $(CFLAGS) -o ldsm83 ld.c
 
-nmgb: $(HDR) nm.c
-	$(CC) $(CFLAGS) -o nmgb nm.c
+nmsm83: $(HDR) nm.c
+	$(CC) $(CFLAGS) -o nmsm83 nm.c
 
-osizegb: $(HDR) osize.c
-	$(CC) $(CFLAGS) -o osizegb osize.c
+osizesm83: $(HDR) osize.c
+	$(CC) $(CFLAGS) -o osizesm83 osize.c
 
-dumprelocsgb: $(HDR) dumprelocs.c
-	$(CC) $(CFLAGS) -o dumprelocsgb dumprelocs.c
+dumprelocssm83: $(HDR) dumprelocs.c
+	$(CC) $(CFLAGS) -o dumprelocssm83 dumprelocs.c
 
 asz80: $(HDR) $(CORE) as1-z80.c as6-z80.c
 	$(CC) $(CFLAGS)  -DTARGET_Z80 -o asz80 $(CORE) as1-z80.c as6-z80.c
@@ -442,7 +442,7 @@ clean:
 	rm -f as9900 ld9900 nm9900 osize9900 dumprelocs9900
 	rm -f ascp1600 ldcp1600 nmcp1600 osizecp1600 dumprelocscp1600
 	rm -f asee200 ldee200 nmee200 osizeee200 dumprelocsee200
-	rm -f asgb ldgb nmgb osizegb dumprelocsgb
+	rm -f assm83 ldsm83 nmsm83 osizesm83 dumprelocssm83
 	rm -f ashc11 ldhc11 nmhc11 osizehc11 dumprelocshc11
 	rm -f asnova ldnova nmnova osizenova dumprelocsnova
 	rm -f aspdp4 ldpdp4 nmpdp4 osizepdp4 dumprelocspdp4
@@ -474,7 +474,7 @@ install: all
 	cp asnova ldnova nmnova osizenova dumprelocsnova $(CCROOT)/bin
 	cp asz8 ldz8 nmz8 osizez8 dumprelocsz8 $(CCROOT)/bin
 	cp asz80 ldz80 nmz80 osizez80 dumprelocsz80 $(CCROOT)/bin
-	cp asgb ldgb nmgb osizegb dumprelocsgb $(CCROOT)/bin
+	cp assm83 ldsm83 nmsm83 osizesm83 dumprelocssm83 $(CCROOT)/bin
 	cp assuper8 ldsuper8 nmsuper8 osizesuper8 dumprelocssuper8 $(CCROOT)/bin
 	cp reloc $(CCROOT)/bin/relocz80
 	cp reloc6502 $(CCROOT)/bin/reloc6502
