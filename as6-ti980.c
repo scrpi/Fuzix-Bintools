@@ -1,7 +1,5 @@
 /*
  * TI980 assembler.
- *
- * No 10bit support at this point.
  */
 
 #include	"as.h"

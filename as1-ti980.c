@@ -181,8 +181,6 @@ static void encode_ea(unsigned opcode, int l, int ext)
 {
 	ADDR a1;
 	unsigned t = getea(&a1);
-	if (ext == 2)
-		printf("encode_ea 2\n");
 	opcode |= t << 8;
 	switch(t) {
 	case 0:	/* PC + s */
@@ -204,8 +202,6 @@ TODO
 		outaw(opcode | (a1.a_value & 0xFF));
 		break;
 	case 7:	/* Immediate */
-		if (ext == 2)
-			printf("encode_ea 2i\n");
 		if (signed8(&a1)) {
 			outaw(opcode | (a1.a_value & 0xFF));
 			return;
