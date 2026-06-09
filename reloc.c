@@ -45,6 +45,34 @@ struct exec {
 
 static struct exec hdr;
 
+
+static uint16_t swap(uint16_t a)
+{
+    uint16_t b = (a & 0xFF) << 8;
+    b |= (a & 0xFF00) >> 8;
+    return b;
+}
+
+static void restore_header(void)
+{
+    hdr.a_text = swap(hdr.a_text);
+    hdr.a_data = swap(hdr.a_data);
+    hdr.a_bss = swap(hdr.a_bss);
+}
+
+static int fix_header(void)
+{
+    if (hdr.a_magic == EXEC_MAGIC)
+        return 0;
+    if (hdr.a_magic != 0xA880) {
+        fprintf(stderr, "not a valid binary\n");
+        exit(1);
+    }
+    /* Wrong endian */
+    restore_header();
+    return 1;
+}
+
 int main(int argc, char *argv[])
 {
     uint8_t ar[3];
@@ -54,6 +82,7 @@ int main(int argc, char *argv[])
     int efd, rfd;
     static const uint8_t cff = 0xFF;
     uint8_t d;
+    unsigned swap;
 #ifdef RELOC_6502
     uint8_t ext[4];
     uint16_t rbase;
@@ -77,6 +106,7 @@ int main(int argc, char *argv[])
         fprintf(stderr, "%s: not valid.\n", argv[1]);
         exit(1);
     }
+    swap = fix_header();
     raddr = hdr.a_text + hdr.a_data;		/* End of data */
 #ifdef RELOC_6502
     rbase = raddr;
@@ -156,6 +186,8 @@ int main(int argc, char *argv[])
         perror("lseek");
         exit(1);
     }
+    if (swap)
+        restore_header();
     if (write(efd, &hdr, sizeof(hdr)) != sizeof(hdr)) {
         fprintf(stderr, "%s: unable to update header.\n", argv[2]);
         exit(1);

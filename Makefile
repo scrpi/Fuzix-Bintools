@@ -477,6 +477,7 @@ install: all
 	cp assm83 ldsm83 nmsm83 osizesm83 dumprelocssm83 $(CCROOT)/bin
 	cp assuper8 ldsuper8 nmsuper8 osizesuper8 dumprelocssuper8 $(CCROOT)/bin
 	cp reloc $(CCROOT)/bin/relocz80
+	cp reloc $(CCROOT)/bin/reloc6800
 	cp reloc6502 $(CCROOT)/bin/reloc6502
 	cp template $(CCROOT)/bin/template
 	cp Tools/Flex/binify $(CCROOT)/bin/flex-binify
