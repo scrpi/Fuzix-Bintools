@@ -11,8 +11,8 @@
 
 #include	"as.h"
 
-static addr_t segsize[OSEG];
-static uint32_t truesize[OSEG];
+static uint32_t segsize[OSEG];
+static addr_t truesize[OSEG];
 static off_t segbase[OSEG];
 static uint16_t segpad[OSEG];
 static uint8_t full[OSEG];	/* So we can tell a full wrap from a 0 start */
