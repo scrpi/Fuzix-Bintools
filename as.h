@@ -743,6 +743,102 @@ typedef	uint16_t	VALUE;		/* For symbol values */
 #define NEED_REGISTER	34
 #define NEED_CLSQUARE	35
 
+#elif TARGET_BLIP
+
+/*
+ * BLIP target. The instruction encoding is table-driven from the opcode map
+ * (isa/opcodes.toml -> blip-optab.h); this block only carries the symbol-type
+ * codes the shared core needs, the register codes (isa.md §8.4), and the byte
+ * order. BLIP is little-endian (isa.md §3), so TARGET_BIGENDIAN is NOT defined
+ * and the object header flag carries no big-endian bit.
+ */
+
+typedef	uint16_t	VALUE;		/* For symbol values */
+
+#define ARCH OA_BLIP
+#define ARCH_FLAGS 0			/* little-endian (isa.md §3) */
+#define ARCH_CPUFLAGS 0
+
+#define TARGET_USES_SQUARE		/* '(' groups in expressions; instruction
+					   operand parens are handled in as1-blip */
+
+/* Symbol type fields (shared-core layout). */
+#define	TMREG	0x000F			/* Register code (isa.md §8.4 nibble) */
+#define	TMMDF	0x0001			/* Multidef */
+#define	TMASG	0x0002			/* Defined by "=" */
+#define	TMMODE	0xFF00			/* Mode */
+#define TMADDR 	0x00F0			/* Addressing mode info (unused on BLIP) */
+#define	TMINDIR	0x8000			/* Indirect flag (unused on BLIP) */
+#define TPUBLIC	0x0080			/* Exported symbol */
+
+#define	TNEW	0x0000			/* Virgin */
+#define	TUSER	0x0100			/* User name */
+#define	TBR	0x0200			/* Byte (8-bit) register */
+#define	TWR	0x0300			/* Word (16-bit) register */
+#define	TCC	0x0400			/* Condition code (core needs the code) */
+#define	TSR	0x0400			/* Special reg (core needs the code) */
+#define	TDEFB	0x0500			/* .byte */
+#define	TDEFW	0x0600			/* .word */
+#define	TDEFS	0x0700			/* .ds */
+#define	TDEFM	0x0800			/* .ascii */
+#define	TORG	0x0900			/* .org */
+#define	TEQU	0x0A00			/* .equ */
+#define	TCOND	0x0B00			/* conditional */
+#define	TENDC	0x0C00			/* end conditional */
+#define TSEGMENT 0x0D00			/* segment select */
+#define TEXPORT 0x0E00			/* .export */
+#define TINST	0x1100			/* a BLIP instruction (table-driven) */
+
+/*
+ * Register codes — the move-selector nibble of isa.md §8.4, stored in the
+ * symbol value so (a_type & TMREG) yields the code directly. 16-bit registers
+ * are TWR, 8-bit are TBR. USP is reached only via the privileged banking moves.
+ */
+#define	D	0
+#define	X	1
+#define	Y	2
+#define	SP	3
+#define	PC	4
+#define	A	8
+#define	B	9
+#define	CC	0x0A
+#define	USP	0x0F
+
+/*
+ *	Error message numbers: FIXME - sort general first
+ */
+
+#define BRACKET_EXPECTED 1
+#define MISSING_COMMA	2
+#define SQUARE_EXPECTED 3
+#define PERCENT_EXPECTED 4
+#define UNEXPECTED_CHR	10
+#define PHASE_ERROR	11
+#define MULTIPLE_DEFS	12
+#define SYNTAX_ERROR	13
+#define MUST_BE_ABSOLUTE	14
+#define MISSING_DELIMITER 15
+#define INVALID_CONST	16
+#define BRA_RANGE	17
+#define CONDCODE_ONLY	18
+#define TOOMANYJCC	19
+#define NEED_INDEX	20
+#define INVALID_FORM	21
+#define CONSTANT_ONLY	22
+#define DIVIDE_BY_ZERO	23
+#define CONSTANT_RANGE  24
+#define DATA_IN_BSS	 25
+#define SEGMENT_OVERFLOW 26
+#define DATA_IN_ZP	27
+#define REQUIRE_6309	28
+#define	SEGMENT_CLASH	29
+#define ADDR_REQUIRED	30
+#define INVALID_INDIR	31
+#define INVALID_ID	32
+#define NEED_PREPOST	33
+#define NEED_REGISTER	34
+#define NEED_CLSQUARE	35
+
 #elif TARGET_6800
 
 typedef	uint16_t	VALUE;		/* For symbol values */

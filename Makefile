@@ -137,6 +137,21 @@ osize6809: $(HDR) osize.c
 dumprelocs6809: $(HDR) dumprelocs.c
 	$(CC) $(CFLAGS) -o dumprelocs6809 dumprelocs.c
 
+asblip: $(HDR) $(CORE) as1-blip.c as6-blip.c
+	$(CC) $(CFLAGS)  -DTARGET_BLIP -o asblip $(CORE) as1-blip.c as6-blip.c
+
+ldblip: $(HDR) ld.c
+	$(CC) $(CFLAGS) -o ldblip ld.c
+
+nmblip: $(HDR) nm.c
+	$(CC) $(CFLAGS) -o nmblip nm.c
+
+osizeblip: $(HDR) osize.c
+	$(CC) $(CFLAGS) -o osizeblip osize.c
+
+dumprelocsblip: $(HDR) dumprelocs.c
+	$(CC) $(CFLAGS) -o dumprelocsblip dumprelocs.c
+
 as7000: $(HDR) $(CORE) as1-tms7000.c as6-tms7000.c
 	$(CC) $(CFLAGS)  -DTARGET_TMS7000 -o as7000 $(CORE) as1-tms7000.c as6-tms7000.c
 
