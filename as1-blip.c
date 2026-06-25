@@ -232,7 +232,7 @@ static void emit_rel(ADDR *ap, int size)
 	}
 }
 
-static void emit(int ent, struct opnd *o, int regsel)
+static void emit(int ent, struct opnd *o)
 {
 	const struct optab *e = &blip_optab[ent];
 
@@ -262,9 +262,6 @@ static void emit(int ent, struct opnd *o, int regsel)
 	case T_OFF16:
 	case T_ABS16:
 		outraw(&o->val);
-		break;
-	case T_MOVSEL:
-		outab(regsel);
 		break;
 	case T_REL8:
 		emit_rel(&o->val, 1);
@@ -300,7 +297,7 @@ static void blip_instr(const char *verb)
 	struct opnd o[2];
 	int nop = 0;
 	char key[80];
-	int c, ent, regsel = 0;
+	int c, ent;
 	struct opnd *vop = NULL;
 
 	c = getnb();
@@ -316,26 +313,17 @@ static void blip_instr(const char *verb)
 			unget(c);
 	}
 
-	/* Build the lookup key. Two plain registers (neither USP) are the
-	   generic register move "verb reg,reg" (movsel); otherwise the operand
-	   text is literal (covers the USP-banking moves' specific opcodes). */
+	/* Build the lookup key from the literal mnemonic + operand text. Register-
+	   register moves are dedicated opcodes now (LD D,X / LD X,D / XCHG D,Y),
+	   matched by their literal key exactly like every other instruction. */
 	strcpy(key, verb);
-	if (nop == 2 && o[0].plainreg && o[1].plainreg
-	    && o[0].regcode != USP && o[1].regcode != USP) {
-		strcat(key, " reg,reg");
-		if (strcmp(verb, "XCHG") == 0)
-			regsel = (o[0].regcode << 4) | o[1].regcode;
-		else	/* LD dst,src keeps src in the high nibble (§8.4) */
-			regsel = (o[1].regcode << 4) | o[0].regcode;
-	} else {
-		if (nop >= 1) {
-			strcat(key, " ");
-			strcat(key, o[0].text);
-		}
-		if (nop == 2) {
-			strcat(key, ",");
-			strcat(key, o[1].text);
-		}
+	if (nop >= 1) {
+		strcat(key, " ");
+		strcat(key, o[0].text);
+	}
+	if (nop == 2) {
+		strcat(key, ",");
+		strcat(key, o[1].text);
 	}
 
 	if (o[0].haveval)
@@ -362,7 +350,7 @@ static void blip_instr(const char *verb)
 		aerr(INVALID_FORM);
 		return;
 	}
-	emit(ent, vop ? vop : &o[0], regsel);
+	emit(ent, vop ? vop : &o[0]);
 }
 
 void asmline(void)
