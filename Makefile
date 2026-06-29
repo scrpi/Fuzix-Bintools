@@ -3,6 +3,7 @@ all: as1802 ld1802 nm1802 osize1802 dumprelocs1802 \
      as6800 ld6800 nm6800 osize6800 dumprelocs6800 \
      as6805 ld6805 nm6805 osize6805 dumprelocs6805 \
      as6809 ld6809 nm6809 osize6809 dumprelocs6809 \
+     asblip ldblip nmblip osizeblip dumprelocsblip \
      as7000 ld7000 nm7000 osize7000 dumprelocs7000 \
      as8008 ld8008 nm8008 osize8008 dumprelocs8008 \
      as8070 ld8070 nm8070 osize8070 dumprelocs8070 \
@@ -479,6 +480,7 @@ install: all
 	cp as6800 ld6800 nm6800 osize6800 dumprelocs6800 $(CCROOT)/bin
 	cp as6805 ld6805 nm6805 osize6805 dumprelocs6805 $(CCROOT)/bin
 	cp as6809 ld6809 nm6809 osize6809 dumprelocs6809 $(CCROOT)/bin
+	cp asblip ldblip nmblip osizeblip dumprelocsblip $(CCROOT)/bin
 	cp as7000 ld7000 nm7000 osize7000 dumprelocs7000 $(CCROOT)/bin
 	cp as8008 ld8008 nm8008 osize8008 dumprelocs8008 $(CCROOT)/bin
 	cp as8070 ld8070 nm8070 osize8070 dumprelocs8070 $(CCROOT)/bin
