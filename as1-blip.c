@@ -17,9 +17,43 @@
 #include	<string.h>
 #include	"blip-optab.h"
 
+/*
+ * Branch relaxation across the assembler's 4-pass span fixpoint.
+ *
+ * cc2 emits every branch in its long page-1 rel16 form (LBcc/LBRA/LBSR). When
+ * the resolved displacement fits a signed byte, the page-0 rel8 form (Bcc/BRA/
+ * BSR) is identical in effect and flags (isa.md §8.5 puts both in the all-dashes
+ * row) but is 2 bytes shorter and 1 cycle cheaper. We decide short-vs-long over
+ * the multi-pass span fixpoint exactly as the sibling targets do: pass 0 lays
+ * everything out long (the upper bound), the measuring passes shrink, pass 2
+ * locks each choice into reltab[], and pass 3 replays the locked choices. The
+ * shrink is monotone (removing bytes only pulls targets closer), so no branch
+ * that locked short can be forced back out of range — the fixpoint converges.
+ */
+static uint8_t reltab[2048];		/* one bit per relaxable branch, per file */
+static unsigned int nextrel;
+
+static void setnextrel(int flag)
+{
+	if (nextrel == 8 * sizeof(reltab))
+		aerr(TOOMANYJCC);
+	if (flag)
+		reltab[nextrel >> 3] |= (1 << (nextrel & 7));
+	nextrel++;
+}
+
+static unsigned int getnextrel(void)
+{
+	unsigned int n = reltab[nextrel >> 3] & (1 << (nextrel & 7));
+	nextrel++;
+	return n;
+}
+
 int passbegin(int pass)
 {
 	segment = CODE;		/* default segment */
+	if (pass == 3)
+		nextrel = 0;	/* replay the choices locked on pass 2 */
 	return 1;		/* all passes required */
 }
 
@@ -350,6 +384,44 @@ static void blip_instr(const char *verb)
 		aerr(INVALID_FORM);
 		return;
 	}
+
+	/*
+	 * Relax a long PC-relative branch (page-1 rel16) to its page-0 rel8 form
+	 * when in range. The candidate set — every LB* whose page-0 Bcc/BRA/BSR
+	 * counterpart exists — is identical on every pass and walked in source
+	 * order, so the reltab slot indices stay aligned between the pass-2 lock
+	 * and the pass-3 replay. A branch forced long (out of range, or a target
+	 * outside this segment) still consumes its slot, keeping the indices in
+	 * step.
+	 */
+	if (blip_optab[ent].trail == T_REL16 && nop == 1 &&
+	    verb[0] == 'L' && verb[1] == 'B') {
+		int sidx[2];
+		char skey[80];
+
+		strcpy(skey, verb + 1);		/* LBcc -> Bcc, LBRA -> BRA, ... */
+		strcat(skey, " rel");
+		if (find_matches(skey, sidx) == 1 &&
+		    blip_optab[sidx[0]].trail == T_REL8) {
+			ADDR *t = &o[0].val;
+			int keeplong;
+
+			if (pass == 3)
+				keeplong = getnextrel() != 0;
+			else {
+				int disp = (int)t->a_value - (int)dot[segment] - 2;
+				keeplong = (pass == 0) ||
+				    (t->a_segment != segment &&
+				     t->a_segment != ABSOLUTE) ||
+				    disp < -128 || disp > 127;
+				if (pass == 2)
+					setnextrel(keeplong);
+			}
+			if (!keeplong)
+				ent = sidx[0];	/* emit the short page-0 form */
+		}
+	}
+
 	emit(ent, vop ? vop : &o[0]);
 }
 
