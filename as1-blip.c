@@ -211,6 +211,14 @@ static void parse_operand(struct opnd *o)
 	int c = getnb();
 
 	memset(o, 0, sizeof(*o));
+	if (c == '#') {
+		/* #n8 sign-extended immediate (key form "#$i"). Unambiguous —
+		   never a branch target or mask, so no bareexpr retry. */
+		strcat(o->text, "#$i");
+		getaddr(&o->val);
+		o->haveval = 1;
+		return;
+	}
 	if (c == '(') {
 		strcat(o->text, "(");
 		parse_aform(o, 1);
@@ -289,6 +297,19 @@ static void emit(int ent, struct opnd *o)
 		if (o->val.a_segment == ABSOLUTE && !fits_s8(&o->val))
 			aerr(CONSTANT_RANGE);
 		outrab(&o->val);
+		break;
+	case T_SIMM8:
+		/* Sign-extended byte immediate: the CPU widens the byte to 16
+		   bits, so only assembly-time absolute constants in -128..127
+		   (16-bit 0x0000..0x007F / 0xFF80..0xFFFF) encode. A symbolic /
+		   relocatable operand must be rejected — no relocation kind
+		   yields a sign-extended byte. (aerr only reports on the final
+		   passes, by which point pass 0 has resolved forward equates.) */
+		if (o->val.a_segment != ABSOLUTE)
+			aerr(MUST_BE_ABSOLUTE);
+		else if (!fits_s8(&o->val))
+			aerr(CONSTANT_RANGE);
+		outab(o->val.a_value & 0xFF);
 		break;
 	case T_NONE:
 		break;

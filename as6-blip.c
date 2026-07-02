@@ -79,7 +79,6 @@ SYM	sym[] = {
 	{	0,	"CWAI",		TINST,		0	},
 	{	0,	"DAA",		TINST,		0	},
 	{	0,	"DEC",		TINST,		0	},
-	{	0,	"EOR",		TINST,		0	},
 	{	0,	"HALT",		TINST,		0	},
 	{	0,	"INC",		TINST,		0	},
 	{	0,	"JMP",		TINST,		0	},
@@ -110,8 +109,8 @@ SYM	sym[] = {
 	{	0,	"NOP",		TINST,		0	},
 	{	0,	"OR",		TINST,		0	},
 	{	0,	"ORCC",		TINST,		0	},
-	{	0,	"PSHS",		TINST,		0	},
-	{	0,	"PULS",		TINST,		0	},
+	{	0,	"POP",		TINST,		0	},
+	{	0,	"PUSH",		TINST,		0	},
 	{	0,	"ROL",		TINST,		0	},
 	{	0,	"ROR",		TINST,		0	},
 	{	0,	"RTI",		TINST,		0	},
@@ -142,7 +141,8 @@ SYM	sym[] = {
 	{	0,	"SYNC",		TINST,		0	},
 	{	0,	"TAS",		TINST,		0	},
 	{	0,	"TST",		TINST,		0	},
-	{	0,	"XCHG",		TINST,		0	}
+	{	0,	"XCHG",		TINST,		0	},
+	{	0,	"XOR",		TINST,		0	}
 };
 
 /*
