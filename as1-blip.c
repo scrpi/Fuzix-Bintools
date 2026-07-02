@@ -366,7 +366,10 @@ static void blip_instr(const char *verb)
 			nop = 2;
 		} else
 			unget(c);
-	}
+	} else
+		unget(c);	/* no operand: return the ';'/newline to asmline's
+				   end-of-line handling, else a trailing comment on
+				   an operand-less mnemonic is parsed as a statement */
 
 	/* Build the lookup key from the literal mnemonic + operand text. Register-
 	   register moves are dedicated opcodes now (LD D,X / LD X,D / XCHG D,Y),
