@@ -803,6 +803,11 @@ typedef	uint16_t	VALUE;		/* For symbol values */
 #define	B	9
 #define	CC	0x0A
 #define	USP	0x0F
+/* I is the privileged interrupt-vector base (D-62). It has NO move-selector
+ * nibble — it is written only by `LD I,#imm`, never a register-register move —
+ * so this code is a non-colliding placeholder that lets the assembler recognise
+ * `I` as the destination token; it is never emitted (encoding is key-driven). */
+#define	I	0x0B
 
 /*
  *	Error message numbers: FIXME - sort general first

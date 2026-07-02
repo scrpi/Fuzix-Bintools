@@ -70,6 +70,11 @@ static const struct reg regtab[] = {
 	{ "D", D, 1 }, { "X", X, 1 }, { "Y", Y, 1 }, { "SP", SP, 1 },
 	{ "PC", PC, 1 }, { "USP", USP, 1 },
 	{ "A", A, 0 }, { "B", B, 0 }, { "CC", CC, 0 },
+	/* I: the privileged interrupt-vector base (D-62), recognised so `LD I,$nnnn`
+	   assembles. It is destination-only — no register-register move or memory
+	   mode names it — so any other form (LD A,I, LD A,(I), …) simply finds no
+	   optab key and is rejected `invalid form`, exactly as before. */
+	{ "I", I, 1 },
 	{ NULL, 0, 0 }
 };
 
